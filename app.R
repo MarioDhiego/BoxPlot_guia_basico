@@ -1,4 +1,3 @@
-
 # Carregar os pacotes necessários
 library(shiny)
 library(ggplot2)
@@ -38,7 +37,7 @@ ui <- dashboardPage(
     tabItems(
       tabItem(tabName = "boxplots",
               fluidRow(
-                column(3,
+                column(4,
                        selectInput(
                          inputId = "boxplot_x",
                          label = "Eixo X:",
@@ -46,7 +45,7 @@ ui <- dashboardPage(
                          selected = "cyl"
                        )
                 ),
-                column(3,
+                column(4,
                        selectInput(
                          inputId = "boxplot_y",
                          label = "Eixo Y:",
@@ -54,15 +53,7 @@ ui <- dashboardPage(
                          selected = "mpg"
                        )
                 ),
-                column(3,
-                       selectInput(
-                         inputId = "boxplot_factor",
-                         label = "Fator:",
-                         choices = custom_var_names,
-                         selected = "cyl"
-                       )
-                ),
-                column(3,
+                column(4,
                        selectInput(
                          inputId = "boxplot_type",
                          label = "Tipos de Boxplot:",
@@ -71,12 +62,12 @@ ui <- dashboardPage(
                        )
                 )
               ),
-              plotlyOutput("boxplot", height = "600px")
+              plotlyOutput("boxplot", height = "500px")
       ),
       
       tabItem(tabName = "violinplots",
               fluidRow(
-                column(3,
+                column(4,
                        selectInput(
                          inputId = "violinplot_x",
                          label = "Eixo X:",
@@ -84,7 +75,7 @@ ui <- dashboardPage(
                          selected = "cyl"
                        )
                 ),
-                column(3,
+                column(4,
                        selectInput(
                          inputId = "violinplot_y",
                          label = "Eixo Y:",
@@ -92,15 +83,7 @@ ui <- dashboardPage(
                          selected = "mpg"
                        )
                 ),
-                column(3,
-                       selectInput(
-                         inputId = "violinplot_factor",
-                         label = "Fator:",
-                         choices = custom_var_names,
-                         selected = "cyl"
-                       )
-                ),
-                column(3,
+                column(4,
                        selectInput(
                          inputId = "violinplot_type",
                          label = "Tipo de Violinplot:",
@@ -111,12 +94,12 @@ ui <- dashboardPage(
                        )
                 )
               ),
-              plotlyOutput("violinplot", height = "600px")
+              plotlyOutput("violinplot", height = "500px")
       ),
       
       tabItem(tabName = "boxplot_jitter",
               fluidRow(
-                column(3,
+                column(4,
                        selectInput(
                          inputId = "boxplot_jitter_x",
                          label = "Eixo X:",
@@ -124,7 +107,7 @@ ui <- dashboardPage(
                          selected = "cyl"
                        )
                 ),
-                column(3,
+                column(4,
                        selectInput(
                          inputId = "boxplot_jitter_y",
                          label = "Eixo Y:",
@@ -132,15 +115,7 @@ ui <- dashboardPage(
                          selected = "mpg"
                        )
                 ),
-                column(3,
-                       selectInput(
-                         inputId = "boxplot_jitter_factor",
-                         label = "Fator",
-                         choices = custom_var_names,
-                         selected = "cyl"
-                       )
-                ),
-                column(3,
+                column(4,
                        selectInput(
                          inputId = "boxplot_jitter_type",
                          label = "Tipo de Boxplot com Jitter:",
@@ -150,7 +125,7 @@ ui <- dashboardPage(
                        )
                 )
               ),
-              plotlyOutput("boxplot_jitter", height = "600px")
+              plotlyOutput("boxplot_jitter", height = "500px")
       )
     )
   )
@@ -163,14 +138,12 @@ server <- function(input, output, session) {
                                       y = names(custom_var_names)[custom_var_names == input$boxplot_y]))
     
     if (input$boxplot_type == "Boxplot Classico") {
-      plot <- plot + geom_boxplot(aes(fill = factor(get(names(custom_var_names)[custom_var_names == input$boxplot_factor]), 
-                                                    labels = "Fatores")))+
-        scale_fill_viridis_d(name = "Fatores")
+      plot <- plot + geom_boxplot() +
+        scale_fill_viridis_d()
       
     } else if (input$boxplot_type == "Boxplot Horizontal") {
-      plot <- plot + geom_boxplot(aes(fill = factor(get(names(custom_var_names)[custom_var_names == input$boxplot_factor]), 
-                                                    labels = "Fatores"))) +
-        scale_fill_viridis_d(name = "Fatores") + coord_flip()
+      plot <- plot + geom_boxplot() +
+        scale_fill_viridis_d() + coord_flip()
     }
     
     plot <- plot + labs(x = input$boxplot_x, y = input$boxplot_y, title = "Gráfico em Boxplot") +
@@ -184,20 +157,17 @@ server <- function(input, output, session) {
                                       y = names(custom_var_names)[custom_var_names == input$violinplot_y]))
     
     if (input$violinplot_type == "Violinplot Classico") {
-      plot <- plot + geom_violin(aes(fill = factor(get(names(custom_var_names)[custom_var_names == input$violinplot_factor]), 
-                                                   labels = "Fatores")), alpha = 0.6) +
-        scale_fill_viridis_d(name = "Fatores")
+      plot <- plot + geom_violin(alpha = 0.6) +
+        scale_fill_viridis_d()
       
     } else if (input$violinplot_type == "Violinplot Horizontal") {
-      plot <- plot + geom_violin(aes(fill = factor(get(names(custom_var_names)[custom_var_names == input$violinplot_factor]), 
-                                                   labels = "Fatores")), alpha = 0.6) +
-        scale_fill_viridis_d(name = "Fatores") + coord_flip()
+      plot <- plot + geom_violin(alpha = 0.6) +
+        scale_fill_viridis_d() + coord_flip()
       
     } else if (input$violinplot_type == "ViolinPlot com Boxplot") {
-      plot <- plot + geom_violin(aes(fill = factor(get(names(custom_var_names)[custom_var_names == input$violinplot_factor]), 
-                                                   labels = "Fatores")), alpha = 0.6) +
+      plot <- plot + geom_violin(alpha = 0.6) +
         geom_boxplot(width = 0.2, color = "black", outlier.shape = NA, alpha = 0.6) +
-        scale_fill_viridis_d(name = "Fatores")
+        scale_fill_viridis_d()
     }
     
     plot <- plot + labs(x = input$violinplot_x, y = input$violinplot_y, title = "Gráfico em ViolinPlot") +
@@ -209,18 +179,13 @@ server <- function(input, output, session) {
   output$boxplot_jitter <- renderPlotly({
     plot <- ggplot(mtcars, aes_string(x = names(custom_var_names)[custom_var_names == input$boxplot_jitter_x], 
                                       y = names(custom_var_names)[custom_var_names == input$boxplot_jitter_y])) +
-      geom_boxplot(aes(fill = factor(get(names(custom_var_names)[custom_var_names == input$boxplot_jitter_factor]), 
-                                     labels = "Fatores")), alpha = 0.5) +
-      scale_fill_viridis_d(name = "Fatores") +
-      geom_jitter(width = 0.2, size = 2, alpha = 0.6)
+      geom_boxplot(alpha = 0.5) +
+      geom_jitter(width = 0.2, size = 2, alpha = 0.6) +
+      scale_fill_viridis_d()
     
     if (input$boxplot_jitter_type == "Boxplot com Jitter Classico") {
-      plot <- plot + geom_jitter(aes(color = factor(get(names(custom_var_names)[custom_var_names == input$boxplot_jitter_factor]), 
-                                                    labels = "Fatores")), 
-                                 width = 0.2, 
-                                 size = 2, 
-                                 alpha = 0.6) +
-        scale_color_viridis_d(name = "Fatores")
+      plot <- plot + geom_jitter(width = 0.2, size = 2, alpha = 0.6) +
+        scale_color_viridis_d()
     }
     
     plot <- plot + labs(x = input$boxplot_jitter_x, 
